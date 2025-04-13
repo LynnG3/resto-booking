@@ -1,0 +1,42 @@
+services:
+  test_web:
+    build: .
+    environment:
+      - DATABASE_URL=${DB_URL_SCHEME}://${DB_USER}:${DB_PASS}@test_db:${TEST_DB_PORT}/${TEST_DB_NAME}
+    depends_on:
+      test_db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: pytest tests/ -v --cov=app --cov-report=term --cov-report=html
+    networks:
+      - test_network
+    restart: "no"
+  test_db:
+    container_name: postgres_test
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${TEST_DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+    ports:
+      - "${TEST_DB_PORT}:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres " ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    driver: bridge
+
+volumes:
+  postgres_test_data:
+    driver: local
