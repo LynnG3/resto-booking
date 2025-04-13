@@ -1,8 +1,37 @@
-# resto-booking
-A RESTful API for restaurant table reservations built with FastAPI. This project utilizes SQLAlchemy for database interactions. 
+# 🍽️ Resto-booking
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg?style=flat&logo=python)](https://www.python.org)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-red.svg?style=flat)](https://www.sqlalchemy.org)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+
+## 📋 О проекте
+
+RESTful API сервис для управления бронированием столиков в ресторане.
+Построен с использованием FastAPI и SQLAlchemy,
+предоставляет масштабируемое решение для ресторанного бизнеса. 
+
+### 🚀 Ключевые возможности
+
+- ✨ Управление столиками и их статусами
+- 📅 Система бронирования с валидацией
+- 🔄 Асинхронная обработка запросов
+- 📊 Валидация данных с помощью Pydantic
+- 🔍 Подробная документация API (Swagger/ReDoc)
+
+## 🛠 Технологический стек
+
+- **Backend:** FastAPI, Python 3.8+
+- **База данных:** PostgreSQL, SQLAlchemy
+- **Миграции:** Alembic
+- **Валидация:** Pydantic
+- **Тестирование:** Pytest
+- **Контейнеризация:** Docker, Docker Compose
+- **Линтеры и форматтеры:** Black, Flake8, Ruff, MyPy
 
 ## Project structure
 
+```
 .
 ├── Dockerfile  # Файл для сборки Docker-образа
 ├── LICENSE
@@ -67,8 +96,25 @@ A RESTful API for restaurant table reservations built with FastAPI. This project
         ├── __init__.py
         ├── test_reservation_service.py
         └── test_table_service.py
-
+```
 
 ## TODO:
 - валидация бронирования - нельзя забронить на прошедшую дату
 - дополнить скрипты 
+
+## 🔍 API Документация
+
+После запуска приложения, документация доступна по следующим URL:
+
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## 🧪 Тестирование
+
+```bash
+# Запуск тестов
+pytest
+
+# Запуск тестов с coverage отчетом
+pytest --cov=src tests/
+```
