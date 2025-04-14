@@ -5,6 +5,8 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 
+from sqlalchemy import or_, and_
+from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -89,9 +91,29 @@ async def validate_table_available(
     # Получаем все брони столика на эту дату
     query = select(Reservation).where(
         Reservation.table_id == table_id,
-        Reservation.reservation_time.between(
-            new_slot.start,
-            new_slot.end
+        # Проверяем все случаи пересечения
+        or_(
+            # Новая бронь начинается во время существующей
+            and_(
+                Reservation.reservation_time <= new_slot.start,
+                Reservation.reservation_time + func.make_interval(
+                    Reservation.duration_minutes
+                ) > new_slot.start
+            ),
+            # Новая бронь заканчивается во время существующей
+            and_(
+                Reservation.reservation_time < new_slot.end,
+                Reservation.reservation_time + func.make_interval(
+                    Reservation.duration_minutes
+                ) >= new_slot.end
+            ),
+            # Новая бронь полностью содержит существующую
+            and_(
+                Reservation.reservation_time >= new_slot.start,
+                Reservation.reservation_time + func.make_interval(
+                    Reservation.duration_minutes
+                ) <= new_slot.end
+            )
         )
     )
 

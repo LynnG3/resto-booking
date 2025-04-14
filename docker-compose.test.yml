@@ -8,7 +8,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-    command: pytest tests/ -v --cov=app --cov-report=term --cov-report=html
+    # command: pytest tests/ -v --no-header -q 2>/dev/null
+    command: python ./scripts/run_tests_clean.py
     networks:
       - test_network
     restart: "no"

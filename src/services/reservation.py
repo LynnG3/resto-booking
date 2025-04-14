@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload
 
 from src.db.sessions import get_async_session
 from src.core.logging import get_logger
+from src.models.table import Table
 from src.models.reservation import Reservation
 from src.schemas.reservation import ReservationCreate
 from src.services.table import TableService, get_table_service
@@ -68,6 +69,14 @@ class ReservationService:
             reservation_data.reservation_time
         )
         try:
+            # 1. Сначала проверяем существование столика
+            table = await self.session.get(Table, reservation_data.table_id)
+            if not table:
+                # Используем стандартную FastAPI ошибку
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Столик с идентификатором {reservation_data.table_id} не найден."
+                )
             # Проверяем доступность столика
             await validate_table_available(
                 session=self.session,
